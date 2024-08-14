@@ -41,3 +41,16 @@ jobs:
             echo "Repo Name: $repo_name"
             echo "Deploy Command: ${{ vars.DEPLOY_COMMAND }}"
             echo "Deploy Folder: ${{ vars.DEPLOY_FOLDER_PATH_DEV }}"
+
+      - name: Notification
+        uses: appleboy/discord-action@master
+        with:
+          webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
+          webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
+          username: devopsprabin
+          avatar_url: https://avatars.githubusercontent.com/u/112921260
+          args: |
+            Successfully Deployed: ${{ github.event.repository.name }}
+            Deployment URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Commit: ${{ github.event.head_commit.message }}
+            Branch: ${{ github.ref_name }}
