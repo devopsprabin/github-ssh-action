@@ -1,0 +1,42 @@
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-push-docker-image:
+    name: Build and Deploy ${{ github.event.repository.name }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+#      - name: Login to Github Packages
+#        uses: docker/login-action@v3
+#        with:
+#          registry: ghcr.io
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
+
+#      - name: Build and Push to GitHub Container Registry
+#        uses: docker/build-push-action@v5
+#        with:
+#          context: ./
+#          build-args: |
+#            "_ENV=production"
+#            "GIT_TOKEN=${{ secrets.GIT_TOKEN }}"
+#          tags: ghcr.io/${{ github.repository }}:production
+#          push: ${{ github.ref == 'refs/heads/production' }}
+
+      - name: Deploy command
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            repo_name=$(echo "${{ github.event.repository.name }}" | tr -d '_-')
+            ssh -t ${{ secrets.SSH_USER2 }}@${{ secrets.SSH_HOST2 }} "whoami && cd ${{vars.DEPLOY_FOLDER_PATH_DEV}} && sh ${{ vars.DEPLOY_COMMAND }} $repo_name"
+            echo "Repo Name: $repo_name"
+            echo "Deploy Command: ${{ vars.DEPLOY_COMMAND }}"
+            echo "Deploy Folder: ${{ vars.DEPLOY_FOLDER_PATH_DEV }}"
