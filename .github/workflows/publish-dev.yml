@@ -36,8 +36,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             repo_name=$(echo "${{ github.event.repository.name }}" | tr -d '_-')
-            whoami
-            ssh -t ${{ secrets.SSH_USER2 }}@${{ secrets.SSH_HOST2 }} "whoami && cd ${{vars.DEPLOY_FOLDER_PATH_DEV}} && sh ${{ vars.DEPLOY_COMMAND }} $repo_name"
+            hostname
             echo "Repo Name: $repo_name"
             echo "Deploy Command: ${{ vars.DEPLOY_COMMAND }}"
             echo "Deploy Folder: ${{ vars.DEPLOY_FOLDER_PATH_DEV }}"
